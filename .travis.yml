@@ -15,6 +15,9 @@ jobs:
         cd /tmp
         sudo wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
       - |-
+        cd /home/travis/build/ikethecoder/sae-postgres
+        docker build -t sae-postgres-tests .
+      - |-
         cd /usr/local/bin
         sudo unzip -o /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
         sudo rm -rf /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
@@ -28,12 +31,11 @@ jobs:
       - terraform apply -auto-approve
       install:
       - cd /home/travis/build/ikethecoder/sae-postgres
-      - docker build -t python .
       - |-
         . terraform/workspaces/projectdb/_tmp/env
-        docker run -ti --rm \
+        docker run --rm \
         --net=projectdb_vnet \
-        -e PGPORT -e PGHOST -e PGUSER -e PGDATABASE -e PGPASSWORD \
+        -e PGHOST -e PGPORT -e PGDATABASE -e PGUSER -e PGPASSWORD \
         -v `pwd`:/work -w /work \
         sae-postgres-tests python /work/tests/test.py
       
