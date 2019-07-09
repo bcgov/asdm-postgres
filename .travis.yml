@@ -32,6 +32,7 @@ jobs:
       install:
       - |-
         cd /home/travis/build/ikethecoder/sae-postgres
+        cat terraform/workspaces/projectdb/_tmp/env
         . terraform/workspaces/projectdb/_tmp/env
         docker run --rm \
         --net=projectdb_vnet \
