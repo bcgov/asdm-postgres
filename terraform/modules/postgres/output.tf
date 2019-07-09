@@ -14,3 +14,14 @@ output "readme" {
     TEXT
 
 }
+
+resource "local_file" "env" {
+    content     = <<TEXT
+PGHOST=${var.workspace}_postgres
+PGPORT=${var.externalPort}
+PGUSER=padmin
+PGDATABASE=postgres
+PGPASSWORD=${random_string.postgresSuperPassword.result}
+    TEXT
+    filename = "${var.hostRootPath}/env"
+}

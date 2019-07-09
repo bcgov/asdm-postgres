@@ -29,9 +29,11 @@ jobs:
       install:
       - cd /home/travis/build/ikethecoder/sae-postgres
       - docker build -t python .
-      - docker run -ti --rm \
+      - |-
+        . terraform/workspaces/projectdb/_tmp/env
+        docker run -ti --rm \
         --net=projectdb_vnet \
-        -e PGHOST -e PGUSER -e PGDATABASE -e PGPASSWORD \
+        -e PGPORT -e PGHOST -e PGUSER -e PGDATABASE -e PGPASSWORD \
         -v `pwd`:/work -w /work \
         sae-postgres-tests python /work/tests/test.py
       
