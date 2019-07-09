@@ -14,24 +14,18 @@ echo "hostRootPath=\"`pwd`/_tmp\"" >> terraform.tfvars
 terraform init
 
 terraform apply
-
-
 ```
 
 ### Executing Test Suite
 
 ```
-PGHOST=projectdb_postgres
-PGDATABASE=postgres
-PGUSER=padmin
-PGPASSWORD=your_database_secret_password
+. terraform/workspaces/projectdb/_tmp/env
 
 docker build --tag sae-postgres-tests .
 
 docker run -ti --rm \
     --net=projectdb_vnet \
-    -e PGHOST -e PGUSER -e PGDATABASE -e PGPASSWORD \
+    -e PGHOST -e PGPORT -e PGDATABASE -e PGUSER -e PGPASSWORD \
     -v `pwd`:/work -w /work \
     sae-postgres-tests python setup.py test
-
 ```
