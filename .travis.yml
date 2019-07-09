@@ -1,0 +1,40 @@
+language: node_js
+
+services:
+  - docker
+
+jobs:
+  include:
+    - stage: deploy
+      before_install:
+      - |-
+        if [ ! -d "/tmp/traviscache" ]; then
+          mkdir -p /tmp/traviscache
+        fi
+      - |-
+        cd /tmp
+        sudo wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+      - |-
+        cd /usr/local/bin
+        sudo unzip -o /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+        sudo rm -rf /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+        sudo chmod +x terraform
+      - |-
+        cd /home/travis/build/ikethecoder/sae-postgres/terraform/workspaces/projectdb
+        mkdir _tmp
+        cp terraform.tfvars.example terraform.tfvars
+        echo "hostRootPath=\"`pwd`/_tmp\"" >> terraform.tfvars
+      - terraform init
+      - terraform apply -auto-approve
+      install:
+      - cd /home/travis/build/ikethecoder/sae-postgres
+      - docker build -t python .
+      - docker run -ti --rm \
+        --net=projectdb_vnet \
+        -e PGHOST -e PGUSER -e PGDATABASE -e PGPASSWORD \
+        -v `pwd`:/work -w /work \
+        sae-postgres-tests python /work/tests/test.py
+      
+env:
+  global:
+  - TERRAFORM_VERSION=0.11.11

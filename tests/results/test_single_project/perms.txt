@@ -1,0 +1,2 @@
+        0        1             2        3                                                              4
+0  user_x  test_db  working_data  table_2  INSERT, SELECT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER
