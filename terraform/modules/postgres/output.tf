@@ -17,11 +17,11 @@ output "readme" {
 
 resource "local_file" "env" {
     content     = <<TEXT
-PGHOST=${var.workspace}_postgres
-PGPORT=${var.externalPort}
-PGUSER=padmin
-PGDATABASE=postgres
-PGPASSWORD=${random_string.postgresSuperPassword.result}
+export PGHOST=${var.workspace}_postgres
+export PGPORT=${var.externalPort}
+export PGDATABASE=postgres
+export PGUSER=padmin
+export PGPASSWORD=${random_string.postgresSuperPassword.result}
     TEXT
     filename = "${var.hostRootPath}/env"
 }
