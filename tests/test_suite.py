@@ -1,7 +1,7 @@
 import sys, os
 import logging
 from unittest import TestCase
-from lib.cli import CLI
+from client.cli import CLI
 from tests.expect import Expect
 
 log = logging.getLogger(__name__)
