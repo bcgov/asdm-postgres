@@ -30,14 +30,14 @@ jobs:
       - terraform init
       - terraform apply -auto-approve
       install:
-      - cd /home/travis/build/ikethecoder/sae-postgres
       - |-
+        cd /home/travis/build/ikethecoder/sae-postgres
         . terraform/workspaces/projectdb/_tmp/env
         docker run --rm \
         --net=projectdb_vnet \
         -e PGHOST -e PGPORT -e PGDATABASE -e PGUSER -e PGPASSWORD \
         -v `pwd`:/work -w /work \
-        sae-postgres-tests python /work/tests/test.py
+        sae-postgres-tests python setup.py test
       
 env:
   global:
