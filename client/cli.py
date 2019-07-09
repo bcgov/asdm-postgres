@@ -65,7 +65,8 @@ class CLI:
 
         el = sql_command.splitlines()
         for e in el:
-            log.info(" -> %s" % e)
+            if (e != ""):
+                log.info(" -> %s" % e)
 
         cursor.execute(sql_command)
         try:
