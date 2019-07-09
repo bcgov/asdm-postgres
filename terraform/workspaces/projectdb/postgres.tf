@@ -8,6 +8,7 @@ module "projectdb_postgres" {
   source  = "../../modules/postgres"
   hostRootPath = "${var.hostRootPath}"
   workspace = "${var.workspace}"
+  externalPort = "4000"
   network = "${module.network_private.private_network_name}"
 #  upgrade_support_for_gssapi_authentication = "true"
 #  krb_realm = "AD.LOCAL"

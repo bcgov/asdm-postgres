@@ -12,6 +12,7 @@ logging.basicConfig(level='INFO',
 
 creds = {
     "PGHOST" : os.environ['PGHOST'],
+    "PGPORT" : os.environ['PGPORT'],
     "PGUSER" : os.environ['PGUSER'],
     "PGPASSWORD" : os.environ['PGPASSWORD'],
     "PGDATABASE" : os.environ['PGDATABASE']
