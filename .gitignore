@@ -109,3 +109,5 @@ LOCAL.md
 .terraform
 terraform.tfstate*
 _tmp
+
+.DS_Store

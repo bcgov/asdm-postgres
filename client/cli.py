@@ -16,12 +16,16 @@ logging.basicConfig(level='INFO',
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 class CLI:
-    
-    def __init__ (self, creds):
+    def info(self, msg, *args, **kwargs):
+        if self.quiet == False:
+            log.info(msg, *args, **kwargs)
+
+    def __init__ (self, creds, quiet=False):
+        self.quiet = quiet
         conn_string = "host="+ creds['PGHOST'] +" port="+ "5432" +" dbname="+ creds['PGDATABASE'] +" user=" + creds['PGUSER'] \
         +" password="+ creds['PGPASSWORD']
         conn=psycopg2.connect(conn_string)
-        log.info("Connected to %s as %s" % (creds['PGDATABASE'],creds['PGUSER']))
+        self.info("Connected to %s as %s" % (creds['PGDATABASE'],creds['PGUSER']))
 
         conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 
@@ -35,17 +39,18 @@ class CLI:
     def execute (self, sql, raise_error=False):
         cursor = self.cursor
         try:
-            log.info("Executing %s" % sql)
+            self.info("Executing %s" % sql)
             cursor.execute(sql)
             try:
                 result = cursor.fetchall()
 
                 df = DataFrame(result)
-                log.info(df)
+                self.output(df)
+                return df
             except psycopg2.ProgrammingError:
-                log.info(" NO RESULTS")
+                self.info(" NO RESULTS")
 
-            log.info("... success")
+            self.info("... success")
         except psycopg2.DatabaseError as error:
             if (raise_error):
                 raise error
@@ -54,7 +59,7 @@ class CLI:
 
     def execute_template (self, template, **args):
         cursor = self.cursor
-        log.info("Executing template %s" % template)
+        self.info("Executing template %s" % template)
         basepath = os.path.dirname(__file__)
         f = open("%s/%s" % (basepath, template), "r")
         c = f.read()
@@ -66,16 +71,19 @@ class CLI:
         el = sql_command.splitlines()
         for e in el:
             if (e != ""):
-                log.info(" -> %s" % e)
+                self.info(" -> %s" % e)
 
         cursor.execute(sql_command)
         try:
             result = cursor.fetchall()
 
             df = DataFrame(result)
-            with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', 10000):
-                log.info(df)
+            self.output(df)
         except psycopg2.ProgrammingError:
-            log.info(" NO RESULTS")
-        log.info("... success")
+            self.info(" NO RESULTS")
+        self.info("... success")
+
+    def output(self, df):
+        with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', 10000, 'display.max_colwidth', 10000):
+            self.info(df)
 

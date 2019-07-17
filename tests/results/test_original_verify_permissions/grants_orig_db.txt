@@ -1,0 +1,32 @@
+                      0      1      2      3      4      5   6     7                                             8      9      10
+0        orig_db_2_admin  False   True  False  False   True  -1  None                                            []  False  False
+1   orig_db_2_contribute  False   True  False  False  False  -1  None                                            []  False  False
+2      orig_db_2_enduser  False   True  False  False   True  -1  None                        [orig_db_2_contribute]  False  False
+3     orig_db_2_readonly  False   True  False  False  False  -1  None                                            []  False  False
+4         orig_db_2_user  False   True  False  False   True  -1  None                        [orig_db_2_contribute]  False  False
+5          orig_db_admin  False   True  False  False   True  -1  None                                            []  False  False
+6     orig_db_contribute  False   True  False  False  False  -1  None                                            []  False  False
+7        orig_db_enduser  False   True  False  False   True  -1  None                          [orig_db_contribute]  False  False
+8       orig_db_readonly  False   True  False  False  False  -1  None                                            []  False  False
+9           orig_db_user  False   True  False  False   True  -1  None                          [orig_db_contribute]  False  False
+10                padmin   True   True  False  False   True  -1  None                                            []  False  False
+11     pg_signal_backend  False   True  False  False  False  -1  None                                            []  False  False
+12              postgres   True   True   True   True   True  -1  None                                            []   True   True
+13  project_1_contribute  False  False  False  False  False  -1  None                                            []  False  False
+14  project_1_min_public  False  False  False  False  False  -1  None                                            []  False  False
+15    project_1_readonly  False  False  False  False  False  -1  None                                            []  False  False
+16      project_1_user_1  False   True  False  False   True  -1  None  [project_1_contribute, project_1_min_public]  False  False
+17    test_db_contribute  False  False  False  False  False  -1  None                                            []  False  False
+18    test_db_min_public  False  False  False  False  False  -1  None                                            []  False  False
+19      test_db_readonly  False  False  False  False  False  -1  None                                            []  False  False
+20                user_0  False   True  False  False   True  -1  None                                            []  False  False
+21                user_1  False   True  False  False   True  -1  None                                            []  False  False
+22                user_2  False   True  False  False   True  -1  None                                            []  False  False
+23                user_3  False   True  False  False   True  -1  None                                            []  False  False
+24                user_4  False   True  False  False   True  -1  None                                            []  False  False
+25                user_5  False   True  False  False   True  -1  None                                            []  False  False
+26                user_6  False   True  False  False   True  -1  None                                            []  False  False
+27                user_7  False   True  False  False   True  -1  None                                            []  False  False
+28                user_8  False   True  False  False   True  -1  None                                            []  False  False
+29                user_9  False   True  False  False   True  -1  None                                            []  False  False
+30                user_x  False   True  False  False   True  -1  None      [test_db_contribute, test_db_min_public]  False  False

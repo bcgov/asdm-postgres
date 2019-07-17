@@ -88,7 +88,7 @@ class Expect:
             result = cursor.fetchall()
 
             df = DataFrame(result)
-            with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', 10000):
+            with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', 10000, 'display.max_colwidth', 10000):
                 log.info(df)
             log.info("... success")
             return df
@@ -101,6 +101,12 @@ class Expect:
 
         with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', 10000, 'display.max_colwidth', 10000):
             basepath = os.path.dirname(__file__)
+
+            if os.path.isfile("%s/%s" % (basepath, result_file)) == False:
+                f = open("%s/%s.orig" % (basepath, result_file), "w")
+                f.write("%s" % df)
+                f.close()
+                raise Exception('Expected does not match actual for %s' % result_file)
 
             f = open("%s/%s" % (basepath, result_file), "r")
             match = f.read()

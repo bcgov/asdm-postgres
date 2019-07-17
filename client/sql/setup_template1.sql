@@ -1,0 +1,2 @@
+
+REVOKE ALL ON DATABASE template1 FROM public;

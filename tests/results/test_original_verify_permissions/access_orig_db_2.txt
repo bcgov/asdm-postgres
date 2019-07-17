@@ -1,0 +1,9 @@
+           0                                                                                                                                                                                                    1
+0    orig_db                                                                                                                                                                                                 None
+1  orig_db_2                                                                                                                                                                                                 None
+2     padmin                                                                                                                                                                                                 None
+3   postgres                                                                                                                                                                                                 None
+4  project_1                                                                                                                                                        {padmin=CTc/padmin,project_1_user_1=c/padmin}
+5  template0                                                                                                                                                                  {=c/postgres,postgres=CTc/postgres}
+6  template1                                                                                                                                                                  {=c/postgres,postgres=CTc/postgres}
+7    test_db  {padmin=CTc/padmin,user_x=c/padmin,user_0=c/padmin,user_1=c/padmin,user_2=c/padmin,user_3=c/padmin,user_4=c/padmin,user_5=c/padmin,user_6=c/padmin,user_7=c/padmin,user_8=c/padmin,user_9=c/padmin}

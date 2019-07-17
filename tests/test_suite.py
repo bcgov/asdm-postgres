@@ -20,8 +20,7 @@ creds = {
 
 class TestSuite(TestCase):
 
-    def tearDown(self):
-        return self
+    # def tearDown(self):
 
     def setUp(self):
         self.clean()
@@ -29,11 +28,20 @@ class TestSuite(TestCase):
         self.prepare()
 
     def clean(self):
-        admin = CLI(creds)
+        admin = CLI(creds, True)
 
         db = "test_db"
 
         admin.execute("DROP DATABASE %s;" % db, False)
+
+        databases = ["orig_db", "orig_db_2"]
+        for rdb in databases:
+            admin.execute("DROP DATABASE %s;" % rdb, False)
+            admin.execute("DROP ROLE %s_admin;" % rdb, False)
+            admin.execute("DROP ROLE %s_user;" % rdb, False)
+            admin.execute("DROP ROLE %s_enduser;" % rdb, False)
+            admin.execute("DROP ROLE %s_contribute;" % rdb, False)
+            admin.execute("DROP ROLE %s_readonly;" % rdb, False)
 
         for n in range(1):
             rdb = "project_%s" % (n + 1)
@@ -49,6 +57,9 @@ class TestSuite(TestCase):
         admin.execute("DROP ROLE %s;" % 'tmp_user', False)
         admin.execute("DROP ROLE %s;" % 'tmp_user_incremental', False)
 
+        admin.execute("DROP DATABASE temp_db;", False)
+        admin.execute("DROP ROLE %s;" % 'i_test_user', False)
+
         for n in range(10):
             admin.execute("DROP ROLE user_%s;" % n, False)
         admin.execute("DROP ROLE %s_contribute;" % db, False)
@@ -58,9 +69,8 @@ class TestSuite(TestCase):
         admin.close()
         return self
 
-
     def prepare_test_db(self):
-        admin = CLI(creds)
+        admin = CLI(creds, True)
         db = "test_db"
         
         try:
@@ -69,7 +79,7 @@ class TestSuite(TestCase):
 
             user = "user_x"
 
-            admin_on_db = CLI({**creds, **{"PGDATABASE":db}})
+            admin_on_db = CLI({**creds, **{"PGDATABASE":db}}, True)
             admin_on_db.execute_template("sql/setup_new_database.sql.tpl")
             admin_on_db.execute_template("sql/setup_roles.sql.tpl", WORKSPACE=db)
 
@@ -86,7 +96,7 @@ class TestSuite(TestCase):
             admin.close()
 
     def prepare(self):
-        admin = CLI(creds)
+        admin = CLI(creds, True)
 
         try:
 
@@ -95,7 +105,7 @@ class TestSuite(TestCase):
                 admin.execute("CREATE DATABASE %s;" % rdb, True)
                 admin.execute_template("sql/new_database.sql.tpl", APP_DATABASE=rdb)
 
-                admin_on_db = CLI({**creds, **{"PGDATABASE":rdb}})
+                admin_on_db = CLI({**creds, **{"PGDATABASE":rdb}}, True)
                 admin_on_db.execute_template("sql/setup_new_database.sql.tpl")
                 admin_on_db.execute_template("sql/setup_roles.sql.tpl", WORKSPACE=rdb)
 
@@ -109,6 +119,119 @@ class TestSuite(TestCase):
         finally:
             admin.close()
         return self
+
+
+    def test_simple_user_creating_database(self):
+        admin = Expect(creds)
+
+        try:
+            user = 'i_test_user'
+            admin.execute('show search_path')
+            admin.execute_template("sql/original_db_prep.sql", POSTGRES_APP_USERNAME=user, POSTGRES_APP_PASSWORD=Expect.TMP_PASSWORD)
+
+            admin.execute("ALTER USER %s CREATEDB" % user, True)
+
+            enduser_on_db = Expect({**creds, **{"PGUSER": user, "PGPASSWORD": Expect.TMP_PASSWORD}})
+
+            db = "temp_db"
+            try:
+                enduser_on_db.execute("CREATE DATABASE %s" % db, True)
+            finally:
+                enduser_on_db.execute("DROP ROLE %s_contribute" % db, False)
+                enduser_on_db.execute("DROP ROLE %s_readonly" % db, False)
+                enduser_on_db.execute("DROP DATABASE %s" % db, False)
+            enduser_on_db.close()
+        finally:
+            admin.close()
+
+    def test_set_search_path(self):
+        admin = Expect(creds)
+
+        try:
+            databases = ['orig_db']
+            for db in databases:
+                admin.execute("CREATE DATABASE %s;" % db, True)
+                admin.execute_template("sql/original_db_prep.sql", APP_DATABASE=db, POSTGRES_APP_USERNAME='%s_admin' % db, POSTGRES_APP_PASSWORD=Expect.TMP_PASSWORD)
+    
+                admin_on_db = Expect({**creds, **{"PGDATABASE":db}})
+
+                admin_on_db.execute_template("sql/original_db_setup.sql", APP_DATABASE=db, WORKSPACE=db, POSTGRES_APP_PASSWORD=Expect.TMP_PASSWORD)
+                admin_on_db.execute_template("sql/original_db_user_setup.sql", WORKSPACE=db, USER='%s_enduser' % db, PASSWORD=Expect.TMP_PASSWORD)
+                admin_on_db.close()
+
+                admin.execute("ALTER DATABASE %s SET search_path = working_data" % db, True)
+
+                enduser_on_db = Expect({**creds, **{"PGDATABASE":db, "PGUSER": "%s_enduser" % db, "PGPASSWORD": Expect.TMP_PASSWORD}})
+                enduser_on_db.match_results('sql/query_search_path.sql', 'results/test_set_search_path/results.txt')
+                enduser_on_db.close()
+
+        finally:
+            admin.close()
+
+    # def test_original_verify_permissions(self):
+    #     admin = Expect(creds)
+    #     admin.execute('grant all on database template1 to public', True)
+
+    #     try:
+    #         databases = ['orig_db', 'orig_db_2']
+    #         for db in databases:
+    #             admin.execute("CREATE DATABASE %s;" % db, True)
+    #             admin.execute_template("sql/original_db_prep.sql", APP_DATABASE=db, POSTGRES_APP_USERNAME='%s_admin' % db, POSTGRES_APP_PASSWORD=Expect.TMP_PASSWORD)
+    
+    #             admin_on_db = Expect({**creds, **{"PGDATABASE":db}})
+    #             admin_on_db.execute("REVOKE ALL ON SCHEMA public FROM public", True)
+    #             #admin_on_db.execute('GRANT ALL ON SCHEMA public to public', True)
+
+    #             admin_on_db.execute_template("sql/original_db_setup.sql", APP_DATABASE=db, WORKSPACE=db, POSTGRES_APP_PASSWORD=Expect.TMP_PASSWORD)
+    #             admin_on_db.execute("ALTER ROLE %s_contribute SET search_path = working_data" % db, True)
+    #             admin_on_db.execute_template("sql/original_db_user_setup.sql", WORKSPACE=db, USER='%s_enduser' % db, PASSWORD=Expect.TMP_PASSWORD)
+    #             #admin_on_db.execute("CREATE USER %s WITH ENCRYPTED PASSWORD '%s'" % ("%s_enduser" % db, Expect.TMP_PASSWORD))
+    #             admin_on_db.close()
+
+    #             #admin.execute("ALTER DATABASE %s SET search_path = working_data" % db, True)
+
+    #             enduser_on_db = Expect({**creds, **{"PGDATABASE":db, "PGUSER": "%s_enduser" % db, "PGPASSWORD": Expect.TMP_PASSWORD}})
+    #             enduser_on_db.execute('show search_path')
+    #             enduser_on_db.execute_template("sql/original_db_tables.sql", TABLE='test_table_1')
+    #             enduser_on_db.execute_template("sql/original_db_tables.sql", TABLE='test_table_2')
+
+    #             enduser_on_db.close()
+
+    #         for db in databases:
+    #             admin_db = Expect({**creds, **{"PGDATABASE":db}})
+
+    #             for user in databases:
+    #                 admin_db.match_results("sql/query_permissions.sql.tpl", "results/test_original_verify_permissions/perms_%s_enduser_in_%s.txt" % (user,db), USER='%s_enduser' % user)
+
+    #             #admin_db.match_results("sql/query_grants.sql", "results/test_original_verify_permissions/grants_%s.txt" % (db))
+    #             #admin_db.match_results("sql/query_database.sql", "results/test_original_verify_permissions/access_%s.txt" % (db))
+
+    #             admin_db.close()
+
+    #         db = 'orig_db'
+    #         enduser_on_db = Expect({**creds, **{"PGDATABASE":db, "PGUSER": "%s_enduser" % 'orig_db_2', "PGPASSWORD": Expect.TMP_PASSWORD}})
+    #         enduser_on_db.expect_execute("select * from test_table_1", 'permission denied for relation test_table_1')
+    #         enduser_on_db.close()
+
+    #         enduser_on_db = Expect({**creds, **{"PGDATABASE":db, "PGUSER": "%s_user" % 'orig_db_2', "PGPASSWORD": Expect.TMP_PASSWORD}})
+    #         enduser_on_db.expect_execute("select * from test_table_1", 'permission denied for relation test_table_1')
+    #         enduser_on_db.close()
+
+    #         # REVOKE ALL ON DATABASE template1 FROM public;
+    #         # REVOKE ALL ON DATABASE hostdb FROM public;
+
+    #         admin_db = CLI({**creds, **{"PGDATABASE":db}})
+    #         df = admin_db.execute('SELECT datname FROM pg_database WHERE datistemplate = false')
+    #         admin_db.close()
+
+    #         admin_on_db = Expect({**creds, **{"PGDATABASE":db}})
+    #         admin_on_db.execute_template('sql/query_defaults.sql')
+    #         admin_on_db.execute_template('sql/query_roles.sql')
+    #         admin_on_db.close()
+
+    #     finally:
+    #         admin.close()
+
 
 
     def test_simple(self):
