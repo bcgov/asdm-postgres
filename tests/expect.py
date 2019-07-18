@@ -103,6 +103,8 @@ class Expect:
     def match_results (self, template, result_file, **args):
         df = self.execute_template(template, **args)
 
+        log.info("EXPECT -> MATCH TO %s" % result_file)
+
         with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', 10000, 'display.max_colwidth', 10000):
             basepath = os.path.dirname(__file__)
 
@@ -125,6 +127,7 @@ class Expect:
             log.info("EXPECT -> %s" % "MATCHED")
 
     def expect_connect(self, db, user, expected=None):
+        log.info("EXPECT -> %s for connect to %s as %s" % (expected, db, user))
         try:
             conn_string = "host="+ self.creds['PGHOST'] +" port="+ "5432" +" dbname="+ db +" user=" + user \
             +" password="+ Expect.TMP_PASSWORD
@@ -136,11 +139,12 @@ class Expect:
             not_expected = expected is None or ("%s" % error).find(expected) == -1
             if (not_expected):
                 raise error
+            log.info("EXPECT -> PASS")
             return
         if expected is not None:
             raise Exception('Expected %s but executed successfully.' % expected)
         
-        log.info("EXPECT -> PASS - Connected to %s as %s" % (db, user))
+        log.info("EXPECT -> PASS")
         return conn
 
     def output(self, df):
