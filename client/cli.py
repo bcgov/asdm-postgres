@@ -59,7 +59,7 @@ class CLI:
             if (raise_error):
                 raise error
             else:
-                log_error(error)
+                self.log_error(error)
 
     def execute_template (self, template, **args):
         cursor = self.cursor
