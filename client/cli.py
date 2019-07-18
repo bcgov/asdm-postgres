@@ -20,7 +20,7 @@ class CLI:
         if self.quiet == False:
             log.info(msg, *args, **kwargs)
 
-    def error(self, msg, *args, **kwargs):
+    def log_error(self, msg, *args, **kwargs):
         if self.quiet == False:
             log.error(msg, *args, **kwargs)
 
@@ -59,7 +59,7 @@ class CLI:
             if (raise_error):
                 raise error
             else:
-                error(error)
+                log_error(error)
 
     def execute_template (self, template, **args):
         cursor = self.cursor
