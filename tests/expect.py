@@ -127,7 +127,7 @@ class Expect:
             log.info("EXPECT -> %s" % "MATCHED")
 
     def expect_connect(self, db, user, expected=None):
-        log.info("EXPECT -> %s for connect to %s as %s" % (expected, db, user))
+        log.info("EXPECT -> '%s' for connect to %s as %s" % (expected, db, user))
         try:
             conn_string = "host="+ self.creds['PGHOST'] +" port="+ "5432" +" dbname="+ db +" user=" + user \
             +" password="+ Expect.TMP_PASSWORD
