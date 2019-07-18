@@ -33,6 +33,7 @@ class Expect:
 
     def expect_success (self, sql):
         self.execute (sql, True)
+        log.info("EXPECT -> %s" % "PASSED")
 
     def execute (self, sql, raise_error=False):
         cursor = self.cursor
@@ -63,9 +64,13 @@ class Expect:
             not_expected = expected is None or ("%s" % error).find(expected) == -1
             if (not_expected):
                 raise error
+            log.info("EXPECT -> %s" % "PASSED")
             return
+
         if expected is not None:
             raise Exception('Expected %s but executed successfully.' % expected)
+
+        log.info("EXPECT -> %s" % "PASSED")
         
     def execute_template (self, template, **args):
         cursor = self.cursor
@@ -117,13 +122,14 @@ class Expect:
                 f.close()
                 raise Exception('Expected does not match actual for %s' % result_file)
 
+            log.info("EXPECT -> %s" % "MATCHED")
+
     def expect_connect(self, db, user, expected=None):
         try:
             conn_string = "host="+ self.creds['PGHOST'] +" port="+ "5432" +" dbname="+ db +" user=" + user \
             +" password="+ Expect.TMP_PASSWORD
             
             conn=psycopg2.connect(conn_string)
-            log.info("Expect -> Connected to %s as %s" % (db, user))
 
             conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         except psycopg2.DatabaseError as error:
@@ -133,6 +139,8 @@ class Expect:
             return
         if expected is not None:
             raise Exception('Expected %s but executed successfully.' % expected)
+        
+        log.info("EXPECT -> PASS - Connected to %s as %s" % (db, user))
         return conn
 
     def output(self, df):
