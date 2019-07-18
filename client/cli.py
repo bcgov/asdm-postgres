@@ -20,6 +20,10 @@ class CLI:
         if self.quiet == False:
             log.info(msg, *args, **kwargs)
 
+    def error(self, msg, *args, **kwargs):
+        if self.quiet == False:
+            log.error(msg, *args, **kwargs)
+
     def __init__ (self, creds, quiet=False):
         self.quiet = quiet
         conn_string = "host="+ creds['PGHOST'] +" port="+ "5432" +" dbname="+ creds['PGDATABASE'] +" user=" + creds['PGUSER'] \
@@ -55,7 +59,7 @@ class CLI:
             if (raise_error):
                 raise error
             else:
-                log.error(error)
+                error(error)
 
     def execute_template (self, template, **args):
         cursor = self.cursor
