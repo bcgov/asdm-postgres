@@ -89,5 +89,8 @@ class CLI:
 
     def output(self, df):
         with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', 10000, 'display.max_colwidth', 10000):
-            self.info(df)
+            el = ("%s" % df).splitlines()
+            for e in el:
+                if (e != ""):
+                    self.info(" -> %s" % e)
 
