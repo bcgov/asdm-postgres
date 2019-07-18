@@ -92,5 +92,5 @@ class CLI:
             el = ("%s" % df).splitlines()
             for e in el:
                 if (e != ""):
-                    self.info(" -> %s" % e)
+                    self.info(" : %s" % e)
 

@@ -43,7 +43,7 @@ class Expect:
                 result = cursor.fetchall()
 
                 df = DataFrame(result)
-                log.info(df)
+                self.output(df)
             except psycopg2.ProgrammingError:
                 log.info(" NO RESULTS")
 
@@ -88,8 +88,7 @@ class Expect:
             result = cursor.fetchall()
 
             df = DataFrame(result)
-            with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', 10000, 'display.max_colwidth', 10000):
-                log.info(df)
+            self.output(df)
             log.info("... success")
             return df
         except psycopg2.ProgrammingError:
@@ -124,7 +123,7 @@ class Expect:
             +" password="+ Expect.TMP_PASSWORD
             
             conn=psycopg2.connect(conn_string)
-            print("Connected!")
+            log.info("Expect -> Connected to %s as %s" % (db, user))
 
             conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         except psycopg2.DatabaseError as error:
@@ -135,3 +134,10 @@ class Expect:
         if expected is not None:
             raise Exception('Expected %s but executed successfully.' % expected)
         return conn
+
+    def output(self, df):
+        with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', 10000, 'display.max_colwidth', 10000):
+            el = ("%s" % df).splitlines()
+            for e in el:
+                if (e != ""):
+                    log.info(" : %s" % e)
