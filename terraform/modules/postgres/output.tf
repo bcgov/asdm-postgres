@@ -17,6 +17,7 @@ output "readme" {
 
 resource "local_file" "env" {
     content     = <<TEXT
+export LOG_LEVEL=DEBUG
 export PGHOST=${var.workspace}_postgres
 export PGPORT=${var.externalPort}
 export PGDATABASE=postgres
