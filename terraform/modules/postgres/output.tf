@@ -8,7 +8,7 @@ output "readme" {
 
   docker run -ti --rm \
     --net=${var.network} \
-    -e PGHOST -e PGUSER -e PGDATABASE -e PGPASSWORD \
+    -e LOG_LEVEL -e PGHOST -e PGUSER -e PGDATABASE -e PGPASSWORD \
     postgres${var.images["postgres"]} psql
 
     TEXT
