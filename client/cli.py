@@ -12,8 +12,8 @@ from string import Template
 
 log = logging.getLogger(__name__)
 
-logging.basicConfig(level='INFO',
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+# logging.basicConfig(level='INFO',
+#                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 class CLI:
     def info(self, msg, *args, **kwargs):
