@@ -25,7 +25,7 @@ docker build --tag sae-postgres-tests .
 
 docker run -ti --rm \
     --net=projectdb_vnet \
-    -e PGHOST -e PGPORT -e PGDATABASE -e PGUSER -e PGPASSWORD \
+    -e LOG_LEVEL -e PGHOST -e PGPORT -e PGDATABASE -e PGUSER -e PGPASSWORD \
     -v `pwd`:/work -w /work \
     sae-postgres-tests python setup.py test
 ```
