@@ -26,7 +26,7 @@ class CLI:
 
     def __init__ (self, creds, quiet=False):
         self.quiet = quiet
-        conn_string = "host="+ creds['PGHOST'] +" port="+ "5432" +" dbname="+ creds['PGDATABASE'] +" user=" + creds['PGUSER'] \
+        conn_string = "host="+ creds['PGHOST'] +" port="+ creds['PGPORT'] +" dbname="+ creds['PGDATABASE'] +" user=" + creds['PGUSER'] \
         +" password="+ creds['PGPASSWORD']
         conn=psycopg2.connect(conn_string)
         self.info("Connected to %s as %s" % (creds['PGDATABASE'],creds['PGUSER']))
