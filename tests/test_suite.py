@@ -6,7 +6,7 @@ from tests.expect import Expect
 
 log = logging.getLogger(__name__)
 
-logging.basicConfig(level='INFO',
+logging.basicConfig(level=os.environ['LOG_LEVEL'],
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 
