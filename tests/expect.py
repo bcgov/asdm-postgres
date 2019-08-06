@@ -16,7 +16,7 @@ class Expect:
     TMP_PASSWORD = 's3cr3t_p8ssw0rd'
     
     def __init__ (self, creds):
-        conn_string = "host="+ creds['PGHOST'] +" port="+ "5432" +" dbname="+ creds['PGDATABASE'] +" user=" + creds['PGUSER'] \
+        conn_string = "host="+ creds['PGHOST'] +" port="+ creds['PGPORT'] +" dbname="+ creds['PGDATABASE'] +" user=" + creds['PGUSER'] \
         +" password="+ creds['PGPASSWORD']
         conn=psycopg2.connect(conn_string)
         log.info("Connected to %s as %s" % (creds['PGDATABASE'],creds['PGUSER']))
