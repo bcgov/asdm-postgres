@@ -17,7 +17,7 @@ variable "postgres" {
 variable "images" {
   type = "map"
   default = {
-    postgres = ":9.6.9"
+    postgres = ":10.9.0"
   }
 }
 
