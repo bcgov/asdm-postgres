@@ -37,7 +37,7 @@ jobs:
       - |-
         docker run --rm \
         --net=projectdb_vnet \
-        -e PGHOST -e PGPORT -e PGDATABASE -e PGUSER -e PGPASSWORD \
+        -e LOG_LEVEL=DEBUG -e PGHOST -e PGPORT -e PGDATABASE -e PGUSER -e PGPASSWORD \
         -v `pwd`:/work -w /work \
         sae-postgres-tests python setup.py test
       
