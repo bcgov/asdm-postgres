@@ -14,15 +14,15 @@ SELECT grantee, table_catalog, table_schema, count(*)
   WHERE grantee IN ('${USER}','PUBLIC')
   GROUP BY grantee, table_catalog, table_schema;
 
-SELECT grantee, udt_catalog, udt_schema, count(*)
+SELECT grantee, udt_catalog, udt_schema, udt_name, count(*)
   FROM information_schema.role_udt_grants
   WHERE grantee IN ('${USER}','PUBLIC')
-  GROUP BY grantee, udt_catalog, udt_schema;
+  GROUP BY grantee, udt_catalog, udt_schema, udt_name;
 
-SELECT grantee, object_catalog, object_schema, privilege_type, count(*)
+SELECT grantee, object_catalog, object_schema, object_type, privilege_type, count(*)
   FROM information_schema.role_usage_grants
   WHERE grantee IN ('${USER}','PUBLIC')
-  GROUP BY grantee, object_catalog, object_schema, privilege_type;
+  GROUP BY grantee, object_catalog, object_schema, object_type, privilege_type;
 
 SELECT grantee, specific_catalog, specific_schema, privilege_type, count(*) 
   FROM information_schema.routine_privileges 
