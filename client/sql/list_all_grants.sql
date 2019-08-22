@@ -9,10 +9,11 @@ SELECT grantee, specific_catalog, specific_schema, privilege_type, count(*)
   WHERE grantee IN ('${USER}','PUBLIC')
   GROUP BY grantee, specific_catalog, specific_schema, privilege_type;
 
-SELECT grantee, table_catalog, table_schema, count(*) 
+SELECT grantee, table_catalog, table_schema, table_name,
+      string_agg(privilege_type, ', ') AS privileges
   FROM information_schema.role_table_grants
   WHERE grantee IN ('${USER}','PUBLIC')
-  GROUP BY grantee, table_catalog, table_schema;
+  GROUP BY grantee, table_catalog, table_schema, table_name;
 
 SELECT grantee, udt_catalog, udt_schema, udt_name, count(*)
   FROM information_schema.role_udt_grants
