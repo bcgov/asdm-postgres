@@ -79,10 +79,10 @@ class CLI:
         el = sql_command.splitlines()
         for e in el:
             if (e != ""):
-                self.info(" -> %s" % e)
+                # self.info(" -> %s" % e)
                 current = "%s%s\n" % (current, e)
                 if ';' in current:
-                   self.info(" -> LINE BREAK")
+                   # self.info(" -> LINE BREAK")
                    lines.append(current)
                    current = ""
 
@@ -112,5 +112,5 @@ class CLI:
         el = str(text).splitlines()
         for e in el:
           if (e != ""):
-            self.info(" : %s" % e)
+            self.info(" ->   %s" % e)
 

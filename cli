@@ -21,7 +21,7 @@ creds = {
 }
 
 logging.basicConfig(level=os.environ['LOG_LEVEL'],
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+                    format='%(message)s')
 
 
 admin = CLI(creds, False)
