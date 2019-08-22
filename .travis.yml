@@ -15,15 +15,15 @@ jobs:
         cd /tmp
         sudo wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
       - |-
-        cd /home/travis/build/ikethecoder/sae-postgres
-        docker build -t sae-postgres-tests .
+        cd /home/travis/build/ikethecoder/asdm-postgres
+        docker build -t asdm-postgres-tests .
       - |-
         cd /usr/local/bin
         sudo unzip -o /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
         sudo rm -rf /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
         sudo chmod +x terraform
       - |-
-        cd /home/travis/build/ikethecoder/sae-postgres/terraform/workspaces/projectdb
+        cd /home/travis/build/ikethecoder/asdm-postgres/terraform/workspaces/projectdb
         mkdir _tmp
         cp terraform.tfvars.example terraform.tfvars
         echo "hostRootPath=\"`pwd`/_tmp\"" >> terraform.tfvars
@@ -31,7 +31,7 @@ jobs:
       - terraform apply -auto-approve
       install:
       - |-
-        cd /home/travis/build/ikethecoder/sae-postgres
+        cd /home/travis/build/ikethecoder/asdm-postgres
         . terraform/workspaces/projectdb/_tmp/env
       script:
       - |-
@@ -39,7 +39,7 @@ jobs:
         --net=projectdb_vnet \
         -e LOG_LEVEL=DEBUG -e PGHOST -e PGPORT -e PGDATABASE -e PGUSER -e PGPASSWORD \
         -v `pwd`:/work -w /work \
-        sae-postgres-tests python setup.py test
+        asdm-postgres-tests python setup.py test
       
 env:
   global:
