@@ -1,0 +1,31 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import logging
+from client.cli import CLI
+
+script = sys.argv[1]
+
+params = {} 
+
+for arg in range(2, len(sys.argv)):
+  print(sys.argv[arg])
+  parts = sys.argv[arg].split('=')
+  params[parts[0]] = parts[1]
+
+log = logging.getLogger(__name__)
+
+creds = {
+  "PGDATABASE": os.environ['PGDATABASE']
+}
+
+logging.basicConfig(level=os.environ['LOG_LEVEL'],
+                    format='%(asctime)s - %(levelname)s - %(message)s')
+
+
+admin = CLI(creds, False)
+
+result = admin.execute_template("sql/%s" % script, **params)
+print(result)
+admin.close()

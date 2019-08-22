@@ -26,10 +26,12 @@ class CLI:
 
     def __init__ (self, creds, quiet=False):
         self.quiet = quiet
-        conn_string = "host="+ creds['PGHOST'] +" port="+ creds['PGPORT'] +" dbname="+ creds['PGDATABASE'] +" user=" + creds['PGUSER'] \
-        +" password="+ creds['PGPASSWORD']
+#        conn_string = "host="+ creds['PGHOST'] +" port="+ creds['PGPORT'] +" dbname="+ creds['PGDATABASE'] +" user=" + creds['PGUSER']  \
+#        +" password="+ creds['PGPASSWORD']
+#        conn_string = "user=" + creds['PGUSER']
+        conn_string = ""
         conn=psycopg2.connect(conn_string)
-        self.info("Connected to %s as %s" % (creds['PGDATABASE'],creds['PGUSER']))
+        self.info("Connected")
 
         conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 
