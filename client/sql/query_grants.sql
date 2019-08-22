@@ -7,4 +7,4 @@ SELECT r.rolname, r.rolsuper, r.rolinherit,
         WHERE m.member = r.oid) as memberof
 , r.rolreplication
 , r.rolbypassrls
-FROM pg_catalog.pg_roles r
+FROM pg_catalog.pg_roles r;
