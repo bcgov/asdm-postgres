@@ -74,20 +74,32 @@ class CLI:
         s = Template(c)
         sql_command = s.substitute(args)
 
+        lines = []
+        current = ""
         el = sql_command.splitlines()
         for e in el:
             if (e != ""):
                 self.info(" -> %s" % e)
+                current = "%s%s\n" % (current, e)
+                if ';' in current:
+                   self.info(" -> LINE BREAK")
+                   lines.append(current)
+                   current = ""
 
-        cursor.execute(sql_command)
-        try:
+        for line in lines:
+          if line.startswith('--'):
+              continue
+          self.info(" -> EXECUTE")
+          self.output_pretty(line)
+          cursor.execute(line)
+          try:
             result = cursor.fetchall()
 
             df = DataFrame(result)
             self.output(df)
-        except psycopg2.ProgrammingError:
+          except psycopg2.ProgrammingError:
             self.info(" NO RESULTS")
-        self.info("... success")
+          self.info("... success")
 
     def output(self, df):
         with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', 10000, 'display.max_colwidth', 10000):
@@ -95,4 +107,10 @@ class CLI:
             for e in el:
                 if (e != ""):
                     self.info(" : %s" % e)
+
+    def output_pretty (self, text):
+        el = str(text).splitlines()
+        for e in el:
+          if (e != ""):
+            self.info(" : %s" % e)
 
