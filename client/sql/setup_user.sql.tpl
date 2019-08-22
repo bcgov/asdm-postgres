@@ -1,1 +1,1 @@
-GRANT ${WORKSPACE}_contribute TO ${USER};
+GRANT ${WORKSPACE}_contribute TO "${USER}";

@@ -1,0 +1,8 @@
+
+DROP ROLE IF EXISTS ${WORKSPACE}_contribute;
+DROP ROLE IF EXISTS ${WORKSPACE}_readonly;
+DROP ROLE IF EXISTS ${WORKSPACE}_min_public;
+
+DROP SCHEMA IF EXISTS working_data;
+DROP SCHEMA IF EXISTS protected_data;
+
