@@ -84,7 +84,6 @@ class TestSuite(TestCase):
 
             admin_on_db = CLI({**creds, **{"PGDATABASE":db}}, True)
             admin_on_db.execute_template("sql/setup_new_database.sql.tpl")
-            admin_on_db.execute_template("sql/setup_public.sql.tpl")
             admin_on_db.execute_template("sql/setup_roles.sql.tpl", WORKSPACE=db)
 
             admin_on_db.execute_template("sql/user.sql.tpl", USER=user, PASSWORD=Expect.TMP_PASSWORD)
@@ -392,7 +391,9 @@ class TestSuite(TestCase):
 
         try:
             # Create tables
-            hacker_user = Expect({**creds, **{"PGUSER":'user_x', "PGDATABASE":'test_db', "PGPASSWORD":Expect.TMP_PASSWORD}})
+            admin_on_test_db.execute("GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA pg_catalog TO " + "user_x")
+
+            hacker_user = Expect({**creds, **{"PGUSER":'user_x', "PGDATABASE":db, "PGPASSWORD":Expect.TMP_PASSWORD}})
             hacker_user.execute_template("sql/test_table.sql.tpl", TABLE='user_x_table')
 
             admin_on_test_db.execute_template("sql/query_permissions.sql.tpl", USER='user_x')
