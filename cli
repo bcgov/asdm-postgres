@@ -34,8 +34,6 @@ parser.add_argument('--params',
 
 args = parser.parse_args()
 
-parser.print_help()
-
 print(args.command)
 
 log = logging.getLogger(__name__)
