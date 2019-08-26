@@ -5,27 +5,84 @@ import sys
 import logging
 from client.cli import CLI
 
-script = sys.argv[1]
+import argparse
 
-params = {} 
+parser = argparse.ArgumentParser(description='Postgres Admin')
+parser.add_argument('command', help="Commands: script | grants")
+parser.add_argument('--script', 
+                    help='The script to run')
+parser.add_argument('--user', 
+                    help='The user you want to include in SQL commands')
+# parser.add_argument('--project', 
+#                     help='research project')
+# parser.add_argument('--token',
+#                     help='token')
+# parser.add_argument('--private',  default=False, action='store_true',
+#                     help='make the repository private so Issues are enabled')
+# parser.add_argument('--repo',
+#                     help='repository')
+# parser.add_argument('--external_url',
+#                     help='external_url')
+# parser.add_argument('--branch',
+#                     help='branch')
+# parser.add_argument('--team', 
+#                     help='share team project')
+# parser.add_argument('--destroy',  default=False, type=bool,
+#                     help='destroy objects')
 
-for arg in range(2, len(sys.argv)):
-  print(sys.argv[arg])
-  parts = sys.argv[arg].split('=')
-  params[parts[0]] = parts[1]
+args = parser.parse_args()
+
+parser.print_help()
+
+print(args.command)
 
 log = logging.getLogger(__name__)
 
 creds = {
-  "PGDATABASE": os.environ['PGDATABASE']
+    "PGDATABASE": os.environ['PGDATABASE']
 }
 
 logging.basicConfig(level=os.environ['LOG_LEVEL'],
                     format='%(message)s')
 
+if args.command == "script":
+    script = args.script
 
-admin = CLI(creds, False)
+    params = {} 
 
-result = admin.execute_template("sql/%s" % script, **params)
-print(result)
-admin.close()
+    for arg in range(2, len(sys.argv)):
+        print(sys.argv[arg])
+        parts = sys.argv[arg].split('=')
+        params[parts[0]] = parts[1]
+
+    admin = CLI(creds, False)
+
+    try:
+        admin.execute_template("sql/%s.sql.tpl" % script, **params)
+    finally:
+        admin.close()
+
+if args.command == "grants":
+    admin = CLI(creds, False)
+
+    script = "list_all_grants"
+
+    user = args.user
+    print(user)
+
+    try:
+        users =admin.get_users()
+        if user not in users:
+            raise Exception("User not found %s" % user)
+
+        dbs = admin.get_databases()
+        print("DATABASES : %s" % dbs)
+        for db in dbs:
+            print("--- DATABASE %s" % db)
+            specificdb = CLI({"PGDATABASE":db}, False)
+            try:
+                specificdb.execute_template("sql/%s.sql.tpl" % script, DATABASE=db, USER=user)
+            finally:
+                specificdb.close()
+    finally:
+        admin.close()

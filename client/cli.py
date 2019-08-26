@@ -30,6 +30,8 @@ class CLI:
 #        +" password="+ creds['PGPASSWORD']
 #        conn_string = "user=" + creds['PGUSER']
         conn_string = ""
+        if "PGDATABASE" in creds:
+            conn_string = "%s dbname=%s" % (conn_string, creds["PGDATABASE"])
         conn=psycopg2.connect(conn_string)
         self.info("Connected")
 
@@ -114,3 +116,22 @@ class CLI:
           if (e != ""):
             self.info(" ->   %s" % e)
 
+    def get_databases (self):
+        sql = "SELECT datname FROM pg_database WHERE datistemplate = false"
+        return self.get_list(sql)
+
+    def get_users (self):
+        sql = "SELECT usename FROM pg_user"
+        return self.get_list(sql)
+
+    def get_list (self, sql):
+        cursor = self.cursor
+        cursor.execute(sql)
+        result = cursor.fetchall()
+
+        data = []
+        df = DataFrame(result)
+        for index, row in df.iterrows():
+            data.append(row[0])
+
+        return data
