@@ -52,10 +52,11 @@ if args.command == "script":
 
     params = {} 
 
-    for arg in args.params:
-        print(arg)
-        parts = arg.split('=')
-        params[parts[0]] = parts[1]
+    if args.params is not None:
+        for arg in args.params:
+            print(arg)
+            parts = arg.split('=')
+            params[parts[0]] = parts[1]
 
     admin = CLI(creds, False)
 
