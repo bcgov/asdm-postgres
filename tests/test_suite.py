@@ -32,7 +32,7 @@ class TestSuite(TestCase):
 
         db = "test_db"
 
-        admin.execute("DROP DATABASE %s;" % db, False)
+        admin.execute("DROP DATABASE IF EXISTS %s;" % db, False)
 
         databases = ["orig_db", "orig_db_2"]
         for rdb in databases:
@@ -62,8 +62,11 @@ class TestSuite(TestCase):
 
         for n in range(10):
             admin.execute("DROP ROLE user_%s;" % n, False)
+        admin.execute("DROP OWNED BY %s_contribute;" % db, False)
         admin.execute("DROP ROLE %s_contribute;" % db, False)
+        admin.execute("DROP OWNED BY %s_readonly;" % db, False)
         admin.execute("DROP ROLE %s_readonly;" % db, False)
+        admin.execute("DROP OWNED BY %s_min_public;" % db, False)
         admin.execute("DROP ROLE %s_min_public;" % db, False)
 
         admin.close()
@@ -81,6 +84,7 @@ class TestSuite(TestCase):
 
             admin_on_db = CLI({**creds, **{"PGDATABASE":db}}, True)
             admin_on_db.execute_template("sql/setup_new_database.sql.tpl")
+            admin_on_db.execute_template("sql/setup_public.sql.tpl")
             admin_on_db.execute_template("sql/setup_roles.sql.tpl", WORKSPACE=db)
 
             admin_on_db.execute_template("sql/user.sql.tpl", USER=user, PASSWORD=Expect.TMP_PASSWORD)
