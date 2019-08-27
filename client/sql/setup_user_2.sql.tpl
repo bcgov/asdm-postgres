@@ -1,1 +1,1 @@
-GRANT ${WORKSPACE}_min_public TO ${USER};
+GRANT ${WORKSPACE}_min_public TO "${USER}";
