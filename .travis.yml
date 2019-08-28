@@ -15,7 +15,7 @@ jobs:
         cd /tmp
         sudo wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
       - |-
-        cd /home/travis/build/ikethecoder/asdm-postgres
+        cd /home/travis/build/bcgov/asdm-postgres
         docker build -t asdm-postgres-tests .
       - |-
         cd /usr/local/bin
