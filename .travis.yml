@@ -23,7 +23,7 @@ jobs:
         sudo rm -rf /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
         sudo chmod +x terraform
       - |-
-        cd /home/travis/build/ikethecoder/asdm-postgres/terraform/workspaces/projectdb
+        cd /home/travis/build/bcgov/asdm-postgres/terraform/workspaces/projectdb
         mkdir _tmp
         cp terraform.tfvars.example terraform.tfvars
         echo "hostRootPath=\"`pwd`/_tmp\"" >> terraform.tfvars
@@ -31,7 +31,7 @@ jobs:
       - terraform apply -auto-approve
       install:
       - |-
-        cd /home/travis/build/ikethecoder/asdm-postgres
+        cd /home/travis/build/bcgov/asdm-postgres
         . terraform/workspaces/projectdb/_tmp/env
       script:
       - |-
