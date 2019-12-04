@@ -2,6 +2,25 @@
 
 ## Getting Started
 
+### Running Client
+
+```
+export PATH=$PATH:.
+pip install -r requirements.txt
+
+export LOG_LEVEL=INFO
+export PGDATABASE=postgres
+export PGHOST=postgres
+export PGPORT=5432
+export PGUSER=postgres
+export PGPASSWORD=postgres
+
+cli script --script list_databases
+
+cli grants --user test_user --out grants.log
+
+```
+
 ### Preparing Postgres
 
 ```

@@ -9,11 +9,7 @@ import logging
 import pystache
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from string import Template
-
-log = logging.getLogger(__name__)
-
-# logging.basicConfig(level='INFO',
-#                    format='%(asctime)s - %(levelname)s - %(message)s')
+from client.log import log
 
 class CLI:
     def info(self, msg, *args, **kwargs):
